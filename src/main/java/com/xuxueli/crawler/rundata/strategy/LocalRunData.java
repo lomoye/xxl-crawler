@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * lcoal run data
@@ -18,6 +19,30 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class LocalRunData extends RunData {
     private static Logger logger = LoggerFactory.getLogger(LocalRunData.class);
+
+    private final AtomicLong totalAddCounter = new AtomicLong(0L);
+
+    private final AtomicLong actualAddCounter = new AtomicLong(0L);
+
+    private final AtomicLong repeatCounter = new AtomicLong(0L);
+
+    private final AtomicLong takeCounter = new AtomicLong(0L);
+
+    public AtomicLong getTotalAddCounter() {
+        return totalAddCounter;
+    }
+
+    public AtomicLong getActualAddCounter() {
+        return actualAddCounter;
+    }
+
+    public AtomicLong getRepeatCounter() {
+        return repeatCounter;
+    }
+
+    public AtomicLong getTakeCounter() {
+        return takeCounter;
+    }
 
     // url
     private volatile LinkedBlockingQueue<String> unVisitedUrlQueue = new LinkedBlockingQueue<String>();     // 待采集URL池
@@ -30,19 +55,23 @@ public class LocalRunData extends RunData {
      */
     @Override
     public boolean addUrl(String link) {
+        totalAddCounter.getAndIncrement();
         if (!UrlUtil.isUrl(link)) {
             logger.debug(">>>>>>>>>>> xxl-crawler addUrl fail, link not valid: {}", link);
             return false; // check URL格式
         }
         if (visitedUrlSet.contains(link)) {
+            repeatCounter.getAndIncrement();
             logger.debug(">>>>>>>>>>> xxl-crawler addUrl fail, link repeate: {}", link);
             return false; // check 未访问过
         }
         if (unVisitedUrlQueue.contains(link)) {
+            repeatCounter.getAndIncrement();
             logger.debug(">>>>>>>>>>> xxl-crawler addUrl fail, link visited: {}", link);
             return false; // check 未记录过
         }
         unVisitedUrlQueue.add(link);
+        actualAddCounter.getAndIncrement();
         logger.info(">>>>>>>>>>> xxl-crawler addUrl success, link: {}", link);
         return true;
     }
@@ -62,6 +91,7 @@ public class LocalRunData extends RunData {
         }
         if (link != null) {
             visitedUrlSet.add(link);
+            takeCounter.getAndIncrement();
         }
         return link;
     }

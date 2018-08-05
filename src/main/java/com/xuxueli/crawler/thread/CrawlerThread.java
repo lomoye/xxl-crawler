@@ -37,14 +37,17 @@ public class CrawlerThread implements Runnable {
     private XxlCrawler crawler;
     private boolean running;
     private boolean toStop;
+
     public CrawlerThread(XxlCrawler crawler) {
         this.crawler = crawler;
         this.running = true;
         this.toStop = false;
     }
+
     public void toStop() {
         this.toStop = true;
     }
+
     public boolean isRunning() {
         return running;
     }
@@ -95,9 +98,9 @@ public class CrawlerThread implements Runnable {
 
     private boolean process(String link) throws IllegalAccessException, InstantiationException {
         // ------- html ----------
-        String userAgent = crawler.getRunConf().getUserAgentList().size()>1
-                ?crawler.getRunConf().getUserAgentList().get(new Random().nextInt(crawler.getRunConf().getUserAgentList().size()))
-                :crawler.getRunConf().getUserAgentList().size()==1?crawler.getRunConf().getUserAgentList().get(0):null;
+        String userAgent = crawler.getRunConf().getUserAgentList().size() > 1
+                ? crawler.getRunConf().getUserAgentList().get(new Random().nextInt(crawler.getRunConf().getUserAgentList().size()))
+                : crawler.getRunConf().getUserAgentList().size() == 1 ? crawler.getRunConf().getUserAgentList().get(0) : null;
         Proxy proxy = null;
         if (crawler.getRunConf().getProxyMaker() != null) {
             proxy = crawler.getRunConf().getProxyMaker().make();
@@ -137,15 +140,15 @@ public class CrawlerThread implements Runnable {
 
         // ------- pagevo ----------
         if (!crawler.getRunConf().validWhiteUrl(link)) {     // limit unvalid-page parse, only allow spread child
-            return false;
+            return true;
         }
 
         // pagevo class-field info
-        Type[] pageVoClassTypes = ((ParameterizedType)crawler.getRunConf().getPageParser().getClass().getGenericSuperclass()).getActualTypeArguments();
+        Type[] pageVoClassTypes = ((ParameterizedType) crawler.getRunConf().getPageParser().getClass().getGenericSuperclass()).getActualTypeArguments();
         Class pageVoClassType = (Class) pageVoClassTypes[0];
 
         PageSelect pageVoSelect = (PageSelect) pageVoClassType.getAnnotation(PageSelect.class);
-        String pageVoCssQuery = (pageVoSelect!=null && pageVoSelect.cssQuery()!=null && pageVoSelect.cssQuery().trim().length()>0)?pageVoSelect.cssQuery():"html";
+        String pageVoCssQuery = (pageVoSelect != null && pageVoSelect.cssQuery().trim().length() > 0) ? pageVoSelect.cssQuery() : "html";
 
         // pagevo document 2 object
         Elements pageVoElements = html.select(pageVoCssQuery);
@@ -156,8 +159,8 @@ public class CrawlerThread implements Runnable {
                 Object pageVo = pageVoClassType.newInstance();
 
                 Field[] fields = pageVoClassType.getDeclaredFields();
-                if (fields!=null) {
-                    for (Field field: fields) {
+                if (fields != null) {
+                    for (Field field : fields) {
                         if (Modifier.isStatic(field.getModifiers())) {
                             continue;
                         }
@@ -173,7 +176,7 @@ public class CrawlerThread implements Runnable {
                             selectType = fieldSelect.selectType();
                             selectVal = fieldSelect.selectVal();
                         }
-                        if (cssQuery==null || cssQuery.trim().length()==0) {
+                        if (cssQuery == null || cssQuery.trim().length() == 0) {
                             continue;
                         }
 
@@ -186,13 +189,13 @@ public class CrawlerThread implements Runnable {
 
                                 //Type gtATA = fieldGenericType.getActualTypeArguments()[0];
                                 Elements fieldElementList = pageVoElement.select(cssQuery);
-                                if (fieldElementList!=null && fieldElementList.size()>0) {
+                                if (fieldElementList != null && fieldElementList.size() > 0) {
 
                                     List<Object> fieldValueTmp = new ArrayList<Object>();
-                                    for (Element fieldElement: fieldElementList) {
+                                    for (Element fieldElement : fieldElementList) {
 
                                         String fieldElementOrigin = JsoupUtil.parseElement(fieldElement, selectType, selectVal);
-                                        if (fieldElementOrigin==null || fieldElementOrigin.length()==0) {
+                                        if (fieldElementOrigin == null || fieldElementOrigin.length() == 0) {
                                             continue;
                                         }
                                         try {
@@ -211,11 +214,11 @@ public class CrawlerThread implements Runnable {
 
                             Elements fieldElements = pageVoElement.select(cssQuery);
                             String fieldValueOrigin = null;
-                            if (fieldElements!=null && fieldElements.size()>0) {
+                            if (fieldElements != null && fieldElements.size() > 0) {
                                 fieldValueOrigin = JsoupUtil.parseElement(fieldElements.get(0), selectType, selectVal);
                             }
 
-                            if (fieldValueOrigin==null || fieldValueOrigin.length()==0) {
+                            if (fieldValueOrigin == null || fieldValueOrigin.length() == 0) {
                                 continue;
                             }
 
@@ -226,7 +229,7 @@ public class CrawlerThread implements Runnable {
                             }
                         }
 
-                        if (fieldValue!=null) {
+                        if (fieldValue != null) {
                             field.setAccessible(true);
                             field.set(pageVo, fieldValue);
                         }
