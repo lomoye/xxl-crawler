@@ -107,6 +107,16 @@ public class XxlCrawler {
         }
 
         /**
+         * 数据提取页面，非空时只提取匹配的链接进行数据提取
+         */
+        public Builder setTargetUrlRegex(String targetUrlRegex) {
+            if (targetUrlRegex != null && targetUrlRegex.length() > 0) {
+                crawler.runConf.setTargetUrlRegex(targetUrlRegex);
+            }
+            return this;
+        }
+
+        /**
          * 页面解析器
          *
          * @param pageParser

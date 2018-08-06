@@ -35,20 +35,21 @@ public class RunConf {
     private volatile int failRetryCount = 0;                                        // 失败重试次数，大于零时生效
 
     // util
+
     /**
      * valid url, include white url
      *
      * @param link
      * @return
      */
-    public boolean validWhiteUrl(String link){
+    public boolean validWhiteUrl(String link) {
         if (!UrlUtil.isUrl(link)) {
             return false;   // false if url invalid
         }
 
-        if (whiteUrlRegexs!=null && whiteUrlRegexs.size()>0) {
+        if (whiteUrlRegexs != null && whiteUrlRegexs.size() > 0) {
             boolean underWhiteUrl = false;
-            for (String whiteRegex: whiteUrlRegexs) {
+            for (String whiteRegex : whiteUrlRegexs) {
                 if (RegexUtil.matches(whiteRegex, link)) {
                     underWhiteUrl = true;
                 }
@@ -57,6 +58,23 @@ public class RunConf {
                 return false;   // check white
             }
         }
+        return true;    // true if regex is empty
+    }
+
+    public boolean validTargetUrl(String link) {
+        if (!UrlUtil.isUrl(link)) {
+            return false;   // false if url invalid
+        }
+
+        //不是白名单的不用解析了
+        if (!validWhiteUrl(link)) {
+            return false;
+        }
+
+        if (targetUrlRegex != null) {
+            return RegexUtil.matches(targetUrlRegex, link);
+        }
+
         return true;    // true if regex is empty
     }
 
