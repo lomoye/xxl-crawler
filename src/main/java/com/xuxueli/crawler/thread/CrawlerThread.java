@@ -139,7 +139,7 @@ public class CrawlerThread implements Runnable {
         }
 
         // ------- pagevo ----------
-        if (crawler.getRunConf().validTargetUrl(link)) {     // limit unvalid-page parse, only allow spread child
+        if (!crawler.getRunConf().validTargetUrl(link)) {     // limit unvalid-page parse, only allow spread child
             return true;
         }
 
