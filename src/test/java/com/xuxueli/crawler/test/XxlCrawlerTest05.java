@@ -72,6 +72,7 @@ public class XxlCrawlerTest05 {
                 .setPauseMillis(1000)
                 .setUrls("http://www.xicidaili.com/nn/1")
                 .setWhiteUrlRegexs("http://www\\.xicidaili\\.com/nn/[1]")
+                .setTargetUrlRegex("http://www\\.xicidaili\\.com/nn/[1]")
                 .setThreadCount(1)
                 .setPageParser(new PageParser<PageVo>() {
                     @Override
