@@ -71,7 +71,7 @@ public class RunConf {
             return false;
         }
 
-        if (targetUrlRegex != null) {
+        if (targetUrlRegex != null && targetUrlRegex.length() > 0) {
             return RegexUtil.matches(targetUrlRegex, link);
         }
 
