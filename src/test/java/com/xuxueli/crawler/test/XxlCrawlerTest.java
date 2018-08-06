@@ -21,33 +21,39 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class XxlCrawlerTest {
 
-    @PageSelect(cssQuery = "body")
+    @PageSelect(cssQuery = "#list tbody")
     public static class PageVo {
 
-        @PageFieldSelect(cssQuery = ".blog-detail .article-detail .header")
-        private String title;
+        @PageFieldSelect(cssQuery = "td[data-title=\"IP\"]")
+        private String ip;
 
-        @PageFieldSelect(cssQuery = ".ui.horizontal.list>.item:eq(2)")
-        private String read;
+        @PageFieldSelect(cssQuery = "td[data-title=\"PORT\"]")
+        private int port;
 
         private String link;
-//        @PageFieldSelect(cssQuery = ".comment-content")
-//        private List<String> comment;
 
-        public String getTitle() {
-            return title;
+        public String getIp() {
+            return ip;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
+        public void setIp(String ip) {
+            this.ip = ip;
         }
 
-        public String getRead() {
-            return read;
+        public int getPort() {
+            return port;
         }
 
-        public void setRead(String read) {
-            this.read = read;
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        @Override
+        public String toString() {
+            return "PageVo{" +
+                    "ip='" + ip + '\'' +
+                    ", port=" + port +
+                    '}';
         }
 
         public String getLink() {
@@ -56,22 +62,6 @@ public class XxlCrawlerTest {
 
         public void setLink(String link) {
             this.link = link;
-        }
-
-        //        public List<String> getComment() {
-//            return comment;
-//        }
-//
-//        public void setComment(List<String> comment) {
-//            this.comment = comment;
-//        }
-
-        @Override
-        public String toString() {
-            return "PageVo{" +
-                    "title='" + title + '\'' +
-                    ", read=" + read +
-                    " }";
         }
     }
 
@@ -87,10 +77,10 @@ public class XxlCrawlerTest {
         XxlCrawler crawler = new XxlCrawler.Builder()
                 .setRunData(runData)
                 .setFailRetryCount(3)
-                .setPauseMillis(100)
-                .setUrls("https://my.oschina.net/xuxueli")
-                .setWhiteUrlRegexs("https://my\\.oschina\\.net/xuxueli/blog/\\d+")
-                .setThreadCount(3)
+                .setPauseMillis(1000)
+                .setUrls("https://www.kuaidaili.com/free/inha/1/")
+                .setWhiteUrlRegexs("https://www\\.kuaidaili\\.com/free/inha/\\d+/")
+                .setThreadCount(1)
                 .setPageParser(new PageParser<PageVo>() {
                     @Override
                     public void parse(Document html, Element pageVoElement, PageVo pageVo) {
@@ -117,7 +107,7 @@ public class XxlCrawlerTest {
         System.out.println("总共重复url数:" + runData.getRepeatCounter());
         System.out.println("总共取出url数:" + runData.getTakeCounter());
 
-        pageVos.forEach(pageVo -> System.out.println(pageVo.getLink()));
+        pageVos.forEach(pageVo -> System.out.println(pageVo));
     }
 
 }

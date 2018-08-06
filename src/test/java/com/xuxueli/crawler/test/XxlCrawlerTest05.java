@@ -26,14 +26,15 @@ import java.util.*;
 public class XxlCrawlerTest05 {
     private static Logger logger = LoggerFactory.getLogger(XxlCrawlerTest05.class);
 
-    @PageSelect(cssQuery = ".row table tr")
+    @PageSelect(cssQuery = "#ip_list tbody > tr:gt(0)")
     public static class PageVo {
 
-        @PageFieldSelect(cssQuery = "td:eq(0)", selectType = XxlCrawlerConf.SelectType.TEXT)
+        @PageFieldSelect(cssQuery = "td:eq(1)")
         private String ip;
 
-        @PageFieldSelect(cssQuery = "td:eq(1)", selectType = XxlCrawlerConf.SelectType.TEXT)
+        @PageFieldSelect(cssQuery = "td:eq(2)")
         private int port;
+
 
         public String getIp() {
             return ip;
@@ -67,10 +68,11 @@ public class XxlCrawlerTest05 {
 
         // 构造爬虫
         XxlCrawler crawler = new XxlCrawler.Builder()
-                .setUrls("http://www.ip181.com/daili/1.html")
-                .setWhiteUrlRegexs("http://www.ip181.com/daili/\\b[1-2].html")      // 前2页数据
-                //.setWhiteUrlRegexs(new HashSet<String>(Arrays.asList("http://www.ip181.com/daili/\\\\d+.html")))      // 全部数据
-                .setThreadCount(10)
+                .setFailRetryCount(3)
+                .setPauseMillis(1000)
+                .setUrls("http://www.xicidaili.com/nn/1")
+                .setWhiteUrlRegexs("http://www\\.xicidaili\\.com/nn/[1]")
+                .setThreadCount(1)
                 .setPageParser(new PageParser<PageVo>() {
                     @Override
                     public void parse(Document html, Element pageVoElement, PageVo pageVo) {
@@ -78,11 +80,18 @@ public class XxlCrawlerTest05 {
                             return;
                         }
 
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(pageVo.getIp(), pageVo.getPort()));
-                        if (ProxyIpUtil.checkProxy(proxy, null) == 200) {
+                        if (ProxyIpUtil.checkProxy(proxy, "http://whatismyip.akamai.com/") == 200) {
                             proxyPool.add(pageVo);
                             logger.info("proxy pool size : {}, new proxy: {}", proxyPool.size(), pageVo);
                         }
+
 
                     }
                 })
@@ -95,12 +104,12 @@ public class XxlCrawlerTest05 {
         logger.info("----------- proxy pool total size : {} -----------", proxyPool.size());
         logger.info(proxyPool.toString());
 
-        // 校验代理池    (代理方式请求IP地址查询网IP138，可从页面响应确认代理是否生效)
+        // 校验代理池
         logger.info("----------- proxy pool check -----------");
-        if (proxyPool!=null && proxyPool.size()>0) {
-            for (PageVo pageVo: proxyPool) {
+        if (proxyPool.size() > 0) {
+            for (PageVo pageVo : proxyPool) {
                 try {
-                    Document html = JsoupUtil.load(new PageLoadInfo("http://2017.ip138.com/ic.asp",
+                    Document html = JsoupUtil.load(new PageLoadInfo("http://whatismyip.akamai.com/",
                             null,
                             null,
                             null,

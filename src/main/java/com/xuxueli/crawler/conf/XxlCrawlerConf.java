@@ -14,7 +14,7 @@ public class XxlCrawlerConf {
     public static final String USER_AGENT_EDGE = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2486.0 Safari/537.36 Edge/13.10586";
 
     // timeout default, ms
-    public static final int TIMEOUT_MILLIS_DEFAULT = 5*1000;
+    public static final int TIMEOUT_MILLIS_DEFAULT = 5 * 1000;
 
     // content type
     public static final String CONTENT_TYPE_JSON = "application/json";
