@@ -1,6 +1,5 @@
-package com.xuxueli.crawler.parser.strategy;
+package com.xuxueli.crawler.loader;
 
-import com.xuxueli.crawler.loader.PageLoader;
 import com.xuxueli.crawler.model.PageLoadInfo;
 import com.xuxueli.crawler.util.JsoupUtil;
 import org.jsoup.nodes.Document;
@@ -10,7 +9,7 @@ import org.jsoup.nodes.Document;
  *
  * @author xuxueli 2017-12-28 00:29:49
  */
-public class JsoupPageParser extends PageLoader {
+public class JsoupPageLoader extends PageLoader {
 
     @Override
     public Document load(PageLoadInfo pageLoadInfo) {

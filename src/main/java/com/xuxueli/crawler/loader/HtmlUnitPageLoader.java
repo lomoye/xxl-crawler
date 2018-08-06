@@ -1,4 +1,4 @@
-package com.xuxueli.crawler.parser.strategy;
+package com.xuxueli.crawler.loader;
 
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.ProxyConfig;
@@ -7,7 +7,6 @@ import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
-import com.xuxueli.crawler.loader.PageLoader;
 import com.xuxueli.crawler.model.PageLoadInfo;
 import com.xuxueli.crawler.util.UrlUtil;
 import org.jsoup.Jsoup;
