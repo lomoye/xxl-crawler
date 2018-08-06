@@ -92,6 +92,14 @@ public class XxlCrawler {
         }
 
         /**
+         * 允许targetUrl页面扩散爬取, 默认true，关闭时可以有助于精确搜集的场景
+         */
+        public Builder setAllowTargetUrlSpread(boolean allowTargetUrlSpread) {
+            crawler.runConf.setAllowTargetUrlSpread(allowTargetUrlSpread);
+            return this;
+        }
+
+        /**
          * URL白名单正则，非空时进行URL白名单过滤页面
          *
          * @param whiteUrlRegexs

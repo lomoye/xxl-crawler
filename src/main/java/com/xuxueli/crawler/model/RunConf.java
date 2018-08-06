@@ -18,8 +18,9 @@ import java.util.*;
 public class RunConf {
 
     private volatile boolean allowSpread = true;                                    // 允许扩散爬取，将会以现有URL为起点扩散爬取整站
+    private volatile boolean allowTargetUrlSpread = true;                           // 允许target页面也收集URL
     private Set<String> whiteUrlRegexs = Collections.synchronizedSet(new HashSet<String>());    // URL白名单正则，非空时进行URL白名单过滤页面
-    private String targetUrlRegex;                                                  // 真正提取数据的页面
+    private volatile String targetUrlRegex;                                                  // 真正提取数据的页面
     private PageLoader pageLoader = new JsoupPageLoader();                          // 页面下载器
     private PageParser pageParser;                                                  // 页面解析器
 
@@ -86,6 +87,14 @@ public class RunConf {
 
     public void setAllowSpread(boolean allowSpread) {
         this.allowSpread = allowSpread;
+    }
+
+    public boolean isAllowTargetUrlSpread() {
+        return allowTargetUrlSpread;
+    }
+
+    public void setAllowTargetUrlSpread(boolean allowTargetUrlSpread) {
+        this.allowTargetUrlSpread = allowTargetUrlSpread;
     }
 
     public Set<String> getWhiteUrlRegexs() {

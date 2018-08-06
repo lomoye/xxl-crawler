@@ -128,14 +128,20 @@ public class CrawlerThread implements Runnable {
 
         // ------- child link list (FIFO队列,广度优先) ----------
         if (crawler.getRunConf().isAllowSpread()) {     // limit child spread
-            Set<String> links = JsoupUtil.findLinks(html);
-            if (links != null && links.size() > 0) {
-                for (String item : links) {
-                    if (crawler.getRunConf().validWhiteUrl(item)) {      // limit unvalid-child spread
+            if (!crawler.getRunConf().isAllowTargetUrlSpread() && crawler.getRunConf().validTargetUrl(link)) {
+                logger.info(">>>>>>>>>>> {} not allowed to spread", link);
+            } else {
+                Set<String> links = JsoupUtil.findLinks(html);
+                if (links != null && links.size() > 0) {
+                    for (String item : links) {
+                        if (!crawler.getRunConf().validWhiteUrl(item)) {      // limit unvalid-child spread
+                            continue;
+                        }
                         crawler.getRunData().addUrl(item);
                     }
                 }
             }
+
         }
 
         // ------- pagevo ----------
